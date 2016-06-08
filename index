@@ -1,0 +1,21 @@
+<?php
+include 'inc/config.php';
+
+if (!empty($_SESSION['user_id'])) {
+	
+	// L'utilisateur est connecte
+	$userId = $_SESSION['user_id'];
+	$sql = "SELECT * FROM user WHERE id = :id";
+	$stmt = $pdo -> prepare($sql);
+	$stmt -> bindValue(':id', $userId, PDO::PARAM_INT);
+	$stmt -> execute();
+	$user = $stmt->fetch();
+	
+	if(!empty($user)){
+	
+		echo '<p>Bonjour, vous êtes connecté(e) en tant que '.$user['login'].'</p><br>';
+		echo '<a href="logout.php">Déconnexion</a>';
+		exit();
+	}
+}
+echo '<a href="register.php">Inscription</a> | <a href="login.php">Connexion</a>';
