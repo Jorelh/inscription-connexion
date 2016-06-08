@@ -22,8 +22,8 @@
     	<br><br>
     
     	<label>Confirmation du mot de passe : </label>
-    	<input type="password" minlength="8" id="confirm_password" name="confirm_password">
-    	<p><?php if(!empty($errors['confirm_password'])){ echo $errors['confirm_password']; } ?></p>
+    	<input type="password" minlength="8" id="confirmPassword" name="confirmPassword">
+    	<p><?php if(!empty($errors['confirmPassword'])){ echo $errors['confirmPassword']; } ?></p>
     	<br><br>
     
     	<input type="submit" name="registerSubmit" value="Inscription">
