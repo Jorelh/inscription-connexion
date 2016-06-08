@@ -1,0 +1,10 @@
+
+<?php
+include 'inc/config.php';
+session_unset();
+session_destroy();
+
+echo '<h1>Déconnexion</h1>';
+echo '<p>Vous avez bien été déconnecté</p>';
+
+header('location: index.php');
