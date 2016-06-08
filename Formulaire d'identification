@@ -1,0 +1,83 @@
+<?php
+include 'inc/config.php';
+
+// récupération des données de formulaire
+if(!empty($_POST)){
+
+$username = strip_tags(trim($_POST['username']));
+$password = strip_tags(trim($_POST['password']));
+
+$errors = array();
+
+
+	// vérification des champs
+	
+	if (!empty($username)){
+	  if(strlen($username) < 3){
+		  $error['username'] = "Nom d'utilisateur trop court, 3 caractères minimum";
+		}elseif(strlen($username) > 100){
+	    $error['username'] = "Nom d'utilisateur trop long, 100 caractères maximum";	
+		}
+	}else{
+	  $errors['username'] = "Veuillez renseigner un nom d'utilisateur.";
+	}
+	
+	if(!empty($password)) {
+	  if(strlen($password) < 8) {
+		  $errors['password'] = "Votre mot de passe trop court, 8 caractères minimum";
+		}
+	}else{
+	  $errors['password'] = "Veuillez renseigner un mot de passe";
+	}
+
+	
+	// si pas d'erreurs dans $error, le formulaire est bien remplis
+	if(count($errors) == 0){
+		
+		// On vérifie que le username/email correspondent à un user
+		$sql = "SELECT * FROM user WHERE username = :username";
+		$stmt = $pdo -> prepare($sql);
+		$stmt->bindValue(':username', $username, PDO::PARAM_STR);
+		$stmt->execute();
+		$user = $stmt->fetch();
+		
+		if(!empty($user)){
+		
+			$hashedPassword = $user['password'];
+			if(password_verify($password, $hashedPassword)){
+			
+				// On connecte l'utilisateur
+				$_SESSION['user_id'] = $user['id'];
+				echo '<div class="alert alert-success" role="alert"><p>Connexion réussie !</p></div>';
+				//header('Location: index.php');
+			} else {
+				$errors['login'] = 'Identifiants incorrects';
+			}
+		}
+	}
+}
+?>
+
+<div class="container">
+
+  <h1>Connexion</h1>
+  
+  <form method="POST" action="#">
+    <fieldset>
+      <legend>Identification</legend>
+  	  <p><?php if(!empty($errors['login'])){ echo $errors['login']; } ?></p><br><br>
+  
+  	  <label for="username">Pseudo : </label>
+  	  <input type="text" minlength="3" maxlength="100" id="username" name="username" value="<?= $username ?>">
+  	  <br><br>
+  
+  	  <label for="password">Mot de passe : </label>
+  	  <input type="password" minlength="8" id="password" name="password">
+  	  <br><br>
+  
+  	  <input type="submit" name="submitAuthent" value="Connexion">
+  	  
+    </fieldset>
+  </form>
+
+</div>
