@@ -1,0 +1,5 @@
+<?php
+include_once 'inc/db.php';
+include_once 'inc/func.php';
+session_name('authent_session');
+session_start();
