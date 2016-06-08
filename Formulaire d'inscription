@@ -1,0 +1,34 @@
+<div class="container">
+
+  <h1>Inscription</h1>
+  
+  <form method="POST" action="#">
+    <fieldset>
+      <legend>Inscription</legend>
+  
+    	<label for="username">Pseudo : </label>
+    	<input type="text" minlenght="3" maxlength="100" id="username" name="username" value="<?= $username ?>">
+    	<p><?php if(!empty($errors['username'])){ echo $errors['username']; } ?></p>
+    	<br><br>
+    	
+    	<label for="email">Email : </label>
+    	<input type="text" minlenght="6" maxlength="125" id="email" name="email" value="<?= $email ?>">
+    	<p><?php if(!empty($errors['email'])){ echo $errors['email']; } ?></p>
+    	<br><br>
+    
+    	<label for="password">Mot de passe : </label> 
+    	<input type="password" minlength="8" id="password" name="password" >
+    	<p><?php if(!empty($errors['password'])){ echo $errors['password']; } ?></p>
+    	<br><br>
+    
+    	<label>Confirmation du mot de passe : </label>
+    	<input type="password" minlength="8" id="confirm_password" name="confirm_password">
+    	<p><?php if(!empty($errors['confirm_password'])){ echo $errors['confirm_password']; } ?></p>
+    	<br><br>
+    
+    	<input type="submit" value="Inscription">
+    	
+    </fieldset>
+  </form>
+  
+</div>
