@@ -1,3 +1,82 @@
+// récupération des données de formulaire
+if(!empty($_POST)){
+
+  //protections XSS
+  $username       = strip_tags(trim($_POST['username']));
+  $email          = strip_tags(trim($_POST['email']));
+  $password       = strip_tags(trim($_POST['password']));
+  $confirPassword = strip_tags(trim($_POST['confirPassword']));
+  
+  //tableau d'erreurs
+  $errors = array();
+
+	//vérification des champs
+	//pour se connecter 
+	if(!empty($username)) {
+	  if(strlen($username) < 3){
+		  $error['username'] = "Nom d'utilisateur trop court, 3 caractères minimum";
+		}elseif(strlen($username) > 100){
+	    $error['username'] = "Nom d'utilisateur trop long, 100 caractères maximum";	
+		}
+	}else{
+	  $errors['username'] = "Veuillez renseigner un nom d'utilisateur.";
+	}
+	
+	if(!empty($password)) {
+	  if(strlen($password) < 8) {
+		  $errors['password'] = "Votre mot de passe trop court, 8 caractères minimum";
+		}
+	}else{
+	  $errors['password'] = "Veuillez renseigner un mot de passe";
+	}
+	
+	if(!empty($password) && $password !== $confirm_password) {
+		$errors['confirmPassword'] = 'Les mots de passe ne correspondent pas';
+	}
+	
+	// Si aucune erreur dans $error, le formulaire est bien remplis
+	if (count($errors) == 0){
+	
+		// On vérifie que le username/email n'existent pas
+		
+		$sql = "SELECT * FROM user WHERE username = :username";
+		$stmt = $pdo -> prepare($sql);
+		$stmt -> bindValue(':username', $username, PDO::PARAM_STR);
+		$stmt -> execute();
+		$user = $stmt->fetch();
+		
+		if(!empty($user)){
+			$errors['email'] = 'Cet email est deja pris';
+		}else{
+		
+		//cryptage du password
+			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+			
+			//ajout de l'utilisateur en base de donnée
+			$sql = "INSERT INTO user SET username = :username, password = :password, email = :email, date = NOW()";
+			$stmt = $pdo -> prepare($sql);
+			$stmt -> bindValue(':username', $username, PDO::PARAM_STR);
+			$stmt -> bindValue(':email', $email, PDO_PARAM_STR);
+			$stmt -> bindValue(':password', $crypted_password, PDO::PARAM_STR);
+			$stmt -> execute();
+			
+			// On récupère l'id
+			$insertId = $stmt -> lastInsertId();
+			
+			if (!empty($insertId)) {
+			
+				// On connecte l'utilisateur
+				$_SESSION['user_id'] = $insertId;
+				
+				echo '<div class="alert alert-success" role="alert"><p>Inscription réussie !</p></div>';
+				
+				header('Location: index.php');
+			}
+		}
+	}
+}
+
+
 <div class="container">
 
   <h1>Inscription</h1>
